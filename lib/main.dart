@@ -1,5 +1,5 @@
 import 'package:fitness_mobile/config/theme.dart';
-import 'package:fitness_mobile/screens/onboard/onboard.dart';
+import 'package:fitness_mobile/screens/screens.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -15,7 +15,12 @@ class MyApp extends StatelessWidget {
       theme: lightThemeData(context),
       darkTheme: darkThemeData(context),
       debugShowCheckedModeBanner: false,
-      home: OnboardScreen(),
+      initialRoute: '/',
+      routes: {
+        '/': (_) => OnboardScreen(),
+        WelcomeScreen.routeName: (_) => WelcomeScreen(),
+        SignupScreen.routeName: (_) => SignupScreen(),
+      },
     );
   }
 }

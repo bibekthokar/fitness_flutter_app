@@ -1,6 +1,7 @@
 import 'package:fitness_mobile/config/constants.dart';
 import 'package:fitness_mobile/config/palette.dart';
 import 'package:fitness_mobile/models/onboard.dart';
+import 'package:fitness_mobile/screens/screens.dart';
 import 'package:fitness_mobile/widgets/common/buttons/button.dart';
 import 'package:flutter/material.dart';
 
@@ -59,7 +60,7 @@ class _OnboardScreenState extends State<OnboardScreen> {
           Positioned(
             child: SafeArea(
               child: Container(
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   horizontal: DefaultPadding,
                   vertical: DefaultPadding * 2,
                 ),
@@ -69,6 +70,10 @@ class _OnboardScreenState extends State<OnboardScreen> {
                   children: [
                     currentIndex != onboardingList.length - 1
                         ? GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).pushReplacementNamed(
+                                  WelcomeScreen.routeName);
+                            },
                             child: Text(
                               'Skip',
                               style: Theme.of(context).textTheme.button,
@@ -76,8 +81,19 @@ class _OnboardScreenState extends State<OnboardScreen> {
                           )
                         : SizedBox(),
                     OnBoardContent(
-                        onboard: onboardingList[currentIndex],
-                        currentIndex: currentIndex)
+                      onButtonClick: () {
+                        if (currentIndex < 2) {
+                          setState(() {
+                            currentIndex = currentIndex + 1;
+                          });
+                        } else {
+                          Navigator.of(context)
+                              .pushReplacementNamed(WelcomeScreen.routeName);
+                        }
+                      },
+                      onboard: onboardingList[currentIndex],
+                      currentIndex: currentIndex,
+                    )
                   ],
                 ),
               ),
@@ -92,7 +108,9 @@ class _OnboardScreenState extends State<OnboardScreen> {
 class OnBoardContent extends StatelessWidget {
   final Onboard onboard;
   final int currentIndex;
-  const OnBoardContent({this.onboard, this.currentIndex});
+  final Function onButtonClick;
+  const OnBoardContent(
+      {this.onboard, this.currentIndex, @required this.onButtonClick});
 
   @override
   Widget build(BuildContext context) {
@@ -102,10 +120,12 @@ class OnBoardContent extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             for (int index = 0; index < onboardingList.length; index++)
-              Container(
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 150),
                 width: currentIndex == index ? 27 : 8,
                 height: 8,
-                margin: EdgeInsets.symmetric(horizontal: DefaultPadding / 4),
+                margin:
+                    const EdgeInsets.symmetric(horizontal: DefaultPadding / 4),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(50),
                   color: currentIndex == index
@@ -126,10 +146,11 @@ class OnBoardContent extends StatelessWidget {
                 color: Palette.gray2,
               ),
         ),
-        SizedBox(
+        const SizedBox(
           height: DefaultPadding * 4,
         ),
         Button(
+          onPressed: onButtonClick,
           title: onboardingList.length - 1 != currentIndex
               ? 'Next'
               : 'Sign Up Now',
